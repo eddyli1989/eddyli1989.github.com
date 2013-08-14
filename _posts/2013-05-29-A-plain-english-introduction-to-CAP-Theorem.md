@@ -9,7 +9,6 @@ tags: [CAP Theorem]
 
 <div id="post">
 
-<h1>A plain english introduction to <span class="caps">CAP</span> Theorem</h1>
 <p>You’ll often hear about the <span class="caps">CAP</span> theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding <span class="caps">CAP</span> by comparing it with a real world situation.</p>
 <h2>Chapter 1: “Remembrance Inc” Your new venture :</h2>
 <p>Last night when your spouse appreciated you on remembering her birthday and bringing her a gift, a strange Idea strikes you. People are so bad in remembering things. And you’re sooo good at it. So why not start a venture that will put your talent to use? The more you think about it, the more you like it. In fact you even come up with a news paper ad which explains your idea</p>
