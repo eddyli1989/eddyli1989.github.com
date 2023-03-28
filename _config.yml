@@ -104,4 +104,4 @@ theme: cactus
 deploy:
   type: git
   repo: eddyli1989.github.com
-  branch: hexo-cactus
+  branch: master
