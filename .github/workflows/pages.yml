@@ -28,9 +28,9 @@ jobs:
           restore-keys: |
             ${{ runner.OS }}-npm-cache
       - name: Install Dependencies
-        run: sudo npm install
+        run: npm install
       - name: Build
-        run: sudo npm run build
+        run: npm config set unsafe-perm true && npm run build
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
