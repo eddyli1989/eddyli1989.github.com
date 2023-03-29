@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="You’ll often hear about the CAP theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding CAP by">
+<meta property="og:type" content="article">
+<meta property="og:title" content="A plain english introduction to CAP Theorem">
+<meta property="og:url" content="https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/index.html">
+<meta property="og:site_name" content="大帅的博客">
+<meta property="og:description" content="You’ll often hear about the CAP theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding CAP by">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-29T09:22:28.690Z">
+<meta property="article:modified_time" content="2023-03-29T09:22:28.690Z">
+<meta property="article:author" content="大帅">
+<meta property="article:tag" content="CAP Theorem">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>A plain english introduction to CAP Theorem</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/03/29/exit%E5%87%BD%E6%95%B0%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">1.</span> <span class="toc-text">Chapter 1: “Remembrance Inc” Your new venture :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">2.</span> <span class="toc-text">Chapter 2 : You scale up:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">3.</span> <span class="toc-text">Chapter 3 : You have your first “Bad Service” :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">4.</span> <span class="toc-text">Chapter 4: You fix the Consistency problem:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">5.</span> <span class="toc-text">Chapter 5: You come up with the greatest solution Ever:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">6.</span> <span class="toc-text">Chapter 6: Your wife gets angry :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">7.</span> <span class="toc-text">Chapter 7: Conclusion :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">8.</span> <span class="toc-text">Bonus : Eventual Consistency with a run around clerk :</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        A plain english introduction to CAP Theorem
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">大帅</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-03-29T09:22:28.690Z" itemprop="datePublished">2023-03-29</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/CAP-Theorem/" rel="tag">CAP Theorem</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <div id="post">
+
+<p>You’ll often hear about the <span class="caps">CAP</span> theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding <span class="caps">CAP</span> by comparing it with a real world situation.</p>
+<h2>Chapter 1: “Remembrance Inc” Your new venture :</h2>
+<p>Last night when your spouse appreciated you on remembering her birthday and bringing her a gift, a strange Idea strikes you. People are so bad in remembering things. And you’re sooo good at it. So why not start a venture that will put your talent to use? The more you think about it, the more you like it. In fact you even come up with a news paper ad which explains your idea</p>
+<pre>Remembrance Inc! - Never forget,  even without remembering!
+   Ever felt bad that you forget so much?  Don't worry. Help is just a phone away!
+    When you need to remember something, just call 555--55-REMEM and tell us what you need to remember. For eg., call us and let us know of your boss's phone number, and forget to remember it. when you need to know it back.. call back the same number[(555)--55-REMEM ] and we'll tell you what's your boss's phone number.
+   Charges : only $0.1 per request</pre>
+<p>So, your typical phone conversation will look like this:</p>
+<ul>
+    <li>Customer : Hey, Can you store my neighbor’s birthday?</li>
+    <li>You: Sure.. when is it?</li>
+    <li>Customer : 2nd of jan</li>
+    <li>You: (write it down against the customer’s page in your paper note book )Stored. Call us any time for knowing your neighbor’s birthday again!</li>
+    <li>Customer : Thank you!</li>
+    <li>You: No problem! We charged your credit card with $0.1<br>
+&nbsp;</li>
+</ul>
+<h2>Chapter 2 : You scale up:</h2>
+<p>Your venture gets funded by YCombinator. Your Idea is so simple, needs nothing but a paper notebook and phone, yet so effective that it spreads like wild fire. You start getting hundreds of call every day.</p>
+<p>And there starts the problem. You see that more and more of your customers have to wait in the queue to speak to you. Most of them even hang up tired of the waiting tone. Besides when you were sick the other day and could not come to work you lost a whole day of business. Not to mention all those dissatisfied customers who wanted information on that day.<br>
+You decide it’s time for you to scale up and bring in your wife to help you.</p>
+<p>Your start with a simple plan:</p>
+<ol>
+    <li>You and your wife both get an extension phone</li>
+    <li>Customers still dial (555)–55-<span class="caps">REMEM</span> and need to remember only one number</li>
+    <li>A pbx will route the a customers call to whoever is free and equally<br>
+&nbsp;</li>
+</ol>
+<h2>Chapter 3 : You have your first “Bad Service” :</h2>
+<p>Two days after you implemented the new system, you get a call from you get a call from your trusted customer Jhon. This is how it goes:</p>
+<ul>
+    <li>Jhon: Hey</li>
+    <li>You: Glad you called “Remembrance Inc!”. What can I do for you?</li>
+    <li>Jhon: Can you tell me when is my flight to New Delhi?</li>
+    <li>You: Sure.. 1 sec sir<br>
+(You look up your notebook)<br>
+(wow! there is no entry for “flight date” in Jhon’s page)!!!!!</li>
+    <li>You: Sir, I think there is a mistake. You never told us about your flight to delhi</li>
+    <li>Jhon: What! I just called you guys yesterday!(cuts the call!)</li>
+</ul>
+<p>How did that happen? Could Jhon be lying? You think about it for a second and the reason hits you! Could Jhon’s call yesterday reached your wife? You go to your wife’s desk and check her notebook. Sure enough it’s there. You tell this to your wife and she realizes the problem too.</p>
+<p>What a terrible flaw in your distributed design! <strong>Your distributed system is not consistent! There could always be a chance that a customer updates something which goes to either you or your wife and when the next call from the customer is routed to another person there will not be a consistent reply from Remembrance Inc!</strong><br>
+&nbsp;</p>
+<h2>Chapter 4: You fix the Consistency problem:</h2>
+<p>Well, your competitors may ignore a bad service, but not you. You think all night in the bed when your wife is sleeping and come up with a beautiful plan in the morning. You wake up your wife and tell her:</p>
+<p>” Darling this is what we are going to do from now”</p>
+<ul>
+    <li>Whenever any one of us get a call for an update(when the customer wants us to remember something) before completing the call we tell the other person</li>
+    <li>This way both of us note down any updates</li>
+    <li>When there is call for search(When the customer wants information he has already stored) we don’t need to talk with the other person. Since both of us have the latest updated information in both of our note books we can just refer to it..</li>
+</ul>
+<p>There is only one problem though, you say, and that is an “update” request has to involve both of us and we cannot work in parallel during that time. For eg. when you get an update request and telling me to update too, i cannot take other calls. But that’s okay because most calls we get anyway are “search” (a customer updates once and asks many times) . Besides, we cannot give wrong information at any cost.</p>
+<p>“Neat” your wife says, “but there is one more flaw in this system that you haven’t thought of. What if one of us doesn’t report to work on a particular day? On that day, then, we won’t be able to take “any” Update calls, because the other person cannot be updated! We will have <strong>Availability problem , i.e, for eg., if an update request comes to me I will never be able to complete that call because even though I have written the update in my note book, I can never update you. So I can never complete the call!”</strong><br>
+&nbsp;</p>
+<h2>Chapter 5: You come up with the greatest solution Ever:</h2>
+<p>You being to realize a little bit on why distributed system might not be as easy as you thought at first. Is it that difficult to come up with a solution that could be both <strong>“Consistent and Available”</strong>? Could be difficult for others, but not for you!! Then next morning you come up with a solution that your competitors cannot think of in their dreams! You wake your wife up eagerly again..</p>
+<p>” look” , you tell her.. “This is what we can do to be consistent and available” . The plan is mostly similar to what I told you yesterday:</p>
+<ul>
+    <li>i) Whenever any one of us get a call for an update(when the customer wants us to remember something) before completing the call, if the other person is available we tell the other person. This way both of us note down any updates</li>
+    <li>ii) But if the other person is not available(doesn’t report to work) we send the other person an email about the update.</li>
+    <li>iii) The next day when the other person comes to work after taking a day off, He first goes through all the emails, updates his note book accordingly.. before taking his first call.</li>
+</ul>
+<p>Genius! You wife says! I can’t find any flaws in this systems. Let’s put it to use.. Remembrance Inc! is now both <strong>Consistent and available!</strong><br>
+&nbsp;</p>
+<h2>Chapter 6: Your wife gets angry :</h2>
+<p>Everything goes well for a while. Your system is consistent. Your system works well even when one of you doesn’t report to work. But what if Both of you report to work and one of you doesn’t update the other person? Remember all those days you’ve been waking your wife up early with your Greatest-idea-ever-bullshit? * What if your wife decides to take calls but is too angry with you and decides not to update you for a day? Your idea totally breaks! Your idea so far is good for consistency and availability but is not Partition Tolerant!*<br>
+You can decide to be partition tolerant by deciding not to take any calls until you patch up with your wife.. Then your system will not be “available” during that time…<br>
+&nbsp;</p>
+<h2>Chapter 7: Conclusion :</h2>
+<p>So Let’s look at <span class="caps">CAP</span> Theorem now. Its states that, when you are designing a distributed system you can get cannot achieve all three of Consistency, Availability and Partition tolerance. You can pick only two of:</p>
+<ul>
+    <li>Consistency: You customers, once they have updated information with you, will always get the most updated information when they call subsequently. No matter how quickly they call back</li>
+    <li>Availability: Remembrance Inc will always be available for calls until any one of you(you or your wife) report to work.</li>
+    <li>Partition Tolerance: Remembrance Inc will work even if there is a communication loss between you and your wife!<br>
+&nbsp;</li>
+</ul>
+<h2>Bonus : Eventual Consistency with a run around clerk :</h2>
+<p>Here is another food for thought. You can have a run around clerk, who will update other’s notebook when one of your’s or your wife’s note books is updated. The greatest benefit of this is that, he can work in background and one of your or your wife’s “update” doesn’t have to block, waiting for the other one to update. This is how many NoSql systems work, one node updates itself locally and a background process synchronizes all other nodes accordingly… The only problem is that you will lose consistency of some time. For eg., a customer’s call reaches your wife first and before the clerk has a chance to update your notebook , the customer’ calls back and it reaches you. Then he won’t get a consistent reply.. But that said, this is not at all a bad idea if such cases are limited. For eg., assuming a customer won’t forget things so quickly that he calls back in 5 minutes.</p>
+<p>That’s <span class="caps">CAP</span> and eventual consistency for you in simple english :)</p> 
+</div>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">1.</span> <span class="toc-text">Chapter 1: “Remembrance Inc” Your new venture :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">2.</span> <span class="toc-text">Chapter 2 : You scale up:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">3.</span> <span class="toc-text">Chapter 3 : You have your first “Bad Service” :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">4.</span> <span class="toc-text">Chapter 4: You fix the Consistency problem:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">5.</span> <span class="toc-text">Chapter 5: You come up with the greatest solution Ever:</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">6.</span> <span class="toc-text">Chapter 6: Your wife gets angry :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">7.</span> <span class="toc-text">Chapter 7: Conclusion :</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#post"><span class="toc-number">8.</span> <span class="toc-text">Bonus : Eventual Consistency with a run around clerk :</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/03/29/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    大帅
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
