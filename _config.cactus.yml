@@ -1,0 +1,13 @@
+google_analytics:
+  enabled: true
+  id: G-9TV7SDFVG2
+  
+# Enable or disable the RSS feed.
+rss: true
+
+social_links:
+  github: https://github.com/eddyli1989
+  twitter: https://twitter.com/dashuai38953711
+  facebook: /
+  linkedin: /
+  mail: mailto:eddyli@outlook.com
