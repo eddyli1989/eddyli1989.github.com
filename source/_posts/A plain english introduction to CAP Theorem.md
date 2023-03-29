@@ -1,11 +1,7 @@
 ---
-layout: post
 title: "A plain english introduction to CAP Theorem"
-description: ""
-category: ramblings
 tags: [CAP Theorem]
 ---
-{% include JB/setup %}
 
 <div id="post">
 
