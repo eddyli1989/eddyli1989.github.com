@@ -1,10 +1,7 @@
 ---
-layout: post
 title: "exit函数与僵尸进程"
-description: ""
 tags: [exit, 僵尸进程]
 ---
-{% include JB/setup %}
 
 在UNIX中，有三个函数用于正常终止一个程序
 
