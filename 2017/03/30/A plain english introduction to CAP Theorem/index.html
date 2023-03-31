@@ -9,12 +9,12 @@
     <meta name="description" content="You’ll often hear about the CAP theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding CAP by">
 <meta property="og:type" content="article">
 <meta property="og:title" content="A plain english introduction to CAP Theorem">
-<meta property="og:url" content="https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/index.html">
+<meta property="og:url" content="https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/index.html">
 <meta property="og:site_name" content="大帅的博客">
 <meta property="og:description" content="You’ll often hear about the CAP theorem which specifies some kind of an upper limit when designing distributed systems. As with most of my other introduction tutorials, lets try understanding CAP by">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-03-31T00:12:27.494Z">
-<meta property="article:modified_time" content="2023-03-31T00:12:27.494Z">
+<meta property="article:published_time" content="2017-03-30T00:00:00.000Z">
+<meta property="article:modified_time" content="2023-03-31T00:16:27.755Z">
 <meta property="article:author" content="大帅">
 <meta property="article:tag" content="CAP Theorem">
 <meta name="twitter:card" content="summary">
@@ -77,8 +77,10 @@
     <span id="actions">
       <ul>
         
+        <li><a class="icon" aria-label="上一篇" href="/2023/03/25/hello-world/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
-        <li><a class="icon" aria-label="下一篇" href="/2023/03/31/exit%E5%87%BD%E6%95%B0%E4%B8%8E%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="下一篇" href="/2016/03/30/%E5%8A%A8%E6%80%81%E8%BF%9E%E6%8E%A5%E5%92%8C%E9%9D%99%E6%80%81%E8%BF%9E%E6%8E%A5/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
         
         <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
         <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
@@ -91,17 +93,17 @@
     <br/>
     <div id="share" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
@@ -130,7 +132,7 @@
       
     <div class="postdate">
       
-        <time datetime="2023-03-31T00:12:27.494Z" itemprop="datePublished">2023-03-31</time>
+        <time datetime="2017-03-30T00:00:00.000Z" itemprop="datePublished">2017-03-30</time>
         
       
     </div>
@@ -262,17 +264,17 @@ You can decide to be partition tolerant by deciding not to take any calls until 
 
     <div id="share-footer" style="display: none">
       <ul>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/03/31/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&text=A plain english introduction to CAP Theorem"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&is_video=false&description=A plain english introduction to CAP Theorem"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=A plain english introduction to CAP Theorem&body=Check out this article: https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&title=A plain english introduction to CAP Theorem"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&name=A plain english introduction to CAP Theorem&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2017/03/30/A%20plain%20english%20introduction%20to%20CAP%20Theorem/&t=A plain english introduction to CAP Theorem"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
