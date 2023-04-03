@@ -5,21 +5,41 @@ tags: ["Raft","分布式"]
 ---
 
 ## Raft 共识算法
-Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文：https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf，如果缺失英语不行，先看中文翻译版：https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md
+Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版[论文](https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf)，如果英语不行，先看中文[翻译版](https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md)
 
 了解的差不多了以后，基本上就要开始动手去写一个Raft了，这里推荐直接使用MIT 6.824的实验来做，比较容易上手，注意这个实验是使用Go语言做的，如果不熟悉Go语言，可以快速学习一下
 
-
 ## MIT 6.824
-MIT 6.824是一个关于分布式算法的公开课，一般和数据库内核相关的课程一起学习（例如CMU15-445）,这个课可以再下面的地址看到翻译版本：
-<iframe src="//player.bilibili.com/player.html?aid=87684880&bvid=BV1R7411t71W&cid=155852756&page=2" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
+MIT 6.824是一个关于分布式算法的公开课，一般和数据库内核相关的课程一起学习（例如CMU15-445）,这个课的完整视频可以在[这里](https://www.bilibili.com/video/BV1R7411t71W/?p=2&vd_source=38ddec4d9f5d5a36fb2df2883f091000)看到。
 
-我并没有把这个课程看完，我的重点在于这个课程的第二个Lab，用Go语言做了一个Raft，这是入门Raft的一个好材料，该Lab的地址在这里：http://nil.csail.mit.edu/6.824/2022/labs/lab-raft.html，提交作业的地址在：https://6824.scripts.mit.edu/2022/handin.py/
+我并没有把这个课程看完，我的重点在于这个课程的第二个Lab，用Go语言做了一个Raft，这是入门Raft的一个好材料，该Lab的地址在[这里](http://nil.csail.mit.edu/6.824/2022/labs/lab-raft.html)，提交作业的地址在[这里](https://6824.scripts.mit.edu/2022/handin.py)
 
-由于时间关系，我也没有把这个实验做完，只做了前两部，即：选举和日志同步，我的代码在：https://github.com/eddyli1989/6.824
+由于时间关系，我也没有把这个实验做完，只做了前两部，即：选举和日志同步，我的代码在：https://github.com/eddyli1989/6.824，我不建议你直接看答案
 
-下面是一些建议：
+下面是一些大方向之类的建议：
 - 在自己动手编写之前，不建议你在网上看别人的答案
 - 不要着急写代码，在写代码之前先想好程序的主要结构是什么样子，需要什么数据结构，如何驱动整个程序，甚至每个场景下应该如何处理，都先想好，如果实在想不出来，可以画流程图
-- 搞清楚每个状态下的每个变量是干啥用的，否则你只能在一次次莫名其妙的失败中去定位，非常消耗时间(例如我)
-- 
+- 搞清楚每个状态下的每个变量是干啥用的，否则你只能在一次次莫名其妙的失败中去定位，非常消耗时间
+
+## 选举阶段
+- 在实现选举阶段之前，你需要先明确整个程序的运行框架，整个程序基于一个定时器不停的循环，需要新增一个Role变量，用来保存当前的角色，然后再定时器中根据角色的不同，进入不同的函数，这是程序的大框架
+- 确定选举定时器的超时时间，以及随机的时间范围，论文中建议为150~300ms，实际可能需要比这个时间更大，经过多次尝试，这个时间我最终选择了300~450ms
+- 随机数的选择，不要用rand，rand是假随机数，会导致几乎每次随机得到的时间都是固定的，会出现如下情况：当有2~3个节点，而这2~3个节点中，哪个节点满足成为Leader的条件是固定的，但是由于假随机数导致，该节点的定时器总是晚于其他节点，从而导致该节点一直无法赢得选举(瓜分选票，即：每个节点都投票给自己)，这种情况最终会导致用例的失败，因此我选择了crypto/rand.
+- 在第一个2A作业中，你不需要在RequestVote请求里对比日志，这个是2B的部分
+- 每一个节点在每一个Term中，只能投一张票，注意，是每一个Term，所以如果在Term1投给自己，现在收到Term2的投票请求，你还是要投给别人
+- 注意加锁，且不要死锁，在跑test的时候加上-race参数，控制锁的粒度，不要在休眠的时候仍然持有锁
+- 在广播请求时，注意过滤掉自己
+- 在任何阶段，收到一个响应中的Term比自己的Term大，立即变为Folowwer
+- 本实验中的RPC为同步调用，即：在未收到响应前会阻塞，且网络被设定为不可靠，所以任何一个请求的时延可能是不固定的
+- 基于以上原因，建议采用gorouting+chan的异步方式对同步调用进行封装，否则比较难以进行下去
+- 如果接纳了别人的投票，那角色应该变为Folowwer
+- 在变为Leader以后，马上发送AppendEntries
+
+## 日志同步
+- 在RequestVote里要判断谁的日志更新，注意：论文中对谁的日志更新有准确描述，不要臆测，并不是谁的日志越长谁的就更新
+- Start接口在Leader把日志添加到自己的Log数组中就可以返回了，并不用等待同步给其他节点
+- nextIndex的含义，指的是下次同步日志的时候，可以尝试从该索引同步，但并不保障一定能同步成功
+- matchIndex的含义，是用来校准commitIndex的，如果大多数节点的matchIndex都大于某个数，那么commitIndex应该被设置为这个数字
+- matchIndex决定了lastApplied，理论上lastApplied<=matchIndex
+- 应用到自动机的意思就是 构造一个ApplyMsg并把他送到applyCh，在当前场景下ApplyMsg的CommandValid应该被一直设置为true。在实际应用中，应用到自动机的意思应该是，针对该日志对数据做正式的修改，例如该日志是想set x = 10，那么应用到自动机的含义应该就是把x这个key的值设置为10.
+- AppendEntriesArgs中的LeaderCommit扮演了重要角色，他实际上是2PC中的第二阶段，因为LeaderCommit可以控制Folowwer节点的commitIndex，从而控制Folowwer节点的日志提交(lastApplied)，一般正常的流程是：主节点收到Start，然后通过日志同步到子节点，然后主节点提交该日志，并在下一次心跳时，将LeaderCommit带给子节点，然后子节点才会去提交该日志。
