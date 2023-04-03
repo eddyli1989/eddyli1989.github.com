@@ -14,7 +14,7 @@
 <meta property="og:description" content="一个库可以通过两种方式链接到程序中 1、静态链接:使用链接器ld在编译链接的过程中直接将所有符号链接到2进制可执行文件中，在链接的过程中完成符号的重定位。 2、动态链接:使用动态连接器(linux下叫做ld.x.x.x.so),在程序运行时动态加载所需要的符号，然后进行重定位，或者使用dlopen等函数进行显式运行时链接，这里有两种方式，即在程序运行时动态链接，或者使用dlopen进行实时的动态链">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2016-03-30T00:00:00.000Z">
-<meta property="article:modified_time" content="2023-04-03T23:48:28.618Z">
+<meta property="article:modified_time" content="2023-04-03T23:50:22.381Z">
 <meta property="article:author" content="大帅">
 <meta property="article:tag" content="动态链接库">
 <meta name="twitter:card" content="summary">
@@ -161,7 +161,7 @@
 <p>(1) 可重定位代码（relocatable code）：Windows DLL 以及不使用 -fPIC 的 Linux SO。 </p>
 <p>生成动态库时假定它被加载在地址 0 处。加载时它会被加载到一个地址（base），这时要进行一次重定位（relocation），把代码、数据段中所有的地址加上这个 base 的值。这样代码运行时就能使用正确的地址了。 </p>
 <p>(2) 位置无关代码（position independent code）：使用 -fPIC 的 Linux SO。 </p>
-<p>这样的代码本身就能被放到线性地址空间的任意位置，无需修改就能正确执行。通常的方法是获取指令指针（如 IA32 的 EIP 寄存器）的值，加上一个偏移得到全局变量/函数的地址。 </p>
+<p>这样的代码本身就能被放到线性地址空间的任意位置，无需修改就能正确执行。通常的方法是获取指令指针（如 IA32 的 EIP 寄存器）的值，加上一个偏移得到全局变量&#x2F;函数的地址。 </p>
 <p>PIC vs. relocatable： </p>
 <p>(1) PIC 的缺点主要就是代码有可能长一些。例如 IA32，由于不能直接使用 [EIP+constant] 这样的寻址方式，甚至不能直接将 EIP 的值交给其他寄存器，要用到 GOT（global offset table）来定位全局变量和函数。这样导致代码的效率略低。 </p>
 <p>(2) PIC 的加载速度稍快，因为不需要做重定位。 </p>
@@ -170,7 +170,7 @@
 <p>在 Linux 下制作动态链接库，“标准” 的做法是编译成位置无关代码（Position Independent Code，PIC），然后链接成一个动态链接库。经常遇到的一个问题是 -fPIC 是不是必需，因为好像不加经常也能正常运行，只是创建 .so 的时候会有一个警告。 </p>
 <p>(1) 通常的建议是始终加上 -fPIC 生成位置无关代码； </p>
 <p>(2) AMD64 下，必须使用位置无关代码，否则连接失败： </p>
-<p>relocation R_X86_64_32S against `a local symbol’ can not be used when making a shared object; recompile with -fPIC </p>
+<p>relocation R_X86_64_32S against &#96;a local symbol’ can not be used when making a shared object; recompile with -fPIC </p>
 <p>(3) IA32 下，连接成功，但有警告： </p>
 <p>warning: creating a DT_TEXTREL in object. </p>
 <p>如果加上-fPIC那么就使用地址无关代码来实现动态链接，否则使用重定向的方式来实现</p>
