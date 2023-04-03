@@ -6,15 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="Raft 共识算法Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文：https:&#x2F;&#x2F;ramcloud.atlassian.net&#x2F;wiki&#x2F;download&#x2F;attachments&#x2F;6586375&#x2F;raft.pdf，如果缺失英语不行，先看中文翻译版：https:&#x2F;&#x2F;github.com&#x2F;maemual&#x2F;raft-zh_cn&#x2F;blob&#x2F;mast">
+    <meta name="description" content="Raft 共识算法Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文，如果英语不行，先看中文翻译版 了解的差不多了以后，基本上就要开始动手去写一个Raft了，这里推荐直接使用MIT 6.824的实验来做，比较容易上手，注意这个实验是使用Go语言做的，如果不熟悉Go语言，可以快速学习一下 MIT 6.824MIT 6.824是一个关于分布式算法的">
 <meta property="og:type" content="article">
 <meta property="og:title" content="MIT 6.824与Raft共识算法">
 <meta property="og:url" content="https://eddyli1989.github.io/2023/04/03/MIT-6-824%E4%B8%8ERaft%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/index.html">
 <meta property="og:site_name" content="大帅的博客">
-<meta property="og:description" content="Raft 共识算法Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文：https:&#x2F;&#x2F;ramcloud.atlassian.net&#x2F;wiki&#x2F;download&#x2F;attachments&#x2F;6586375&#x2F;raft.pdf，如果缺失英语不行，先看中文翻译版：https:&#x2F;&#x2F;github.com&#x2F;maemual&#x2F;raft-zh_cn&#x2F;blob&#x2F;mast">
+<meta property="og:description" content="Raft 共识算法Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文，如果英语不行，先看中文翻译版 了解的差不多了以后，基本上就要开始动手去写一个Raft了，这里推荐直接使用MIT 6.824的实验来做，比较容易上手，注意这个实验是使用Go语言做的，如果不熟悉Go语言，可以快速学习一下 MIT 6.824MIT 6.824是一个关于分布式算法的">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-03T07:25:53.000Z">
-<meta property="article:modified_time" content="2023-04-03T00:27:06.050Z">
+<meta property="article:modified_time" content="2023-04-03T23:48:28.618Z">
 <meta property="article:author" content="大帅">
 <meta property="article:tag" content="Raft">
 <meta property="article:tag" content="分布式">
@@ -107,7 +107,7 @@
 
     </div>
     <div id="toc">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">Raft 共识算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIT-6-824"><span class="toc-number">2.</span> <span class="toc-text">MIT 6.824</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">Raft 共识算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIT-6-824"><span class="toc-number">2.</span> <span class="toc-text">MIT 6.824</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E9%98%B6%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">选举阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-number">4.</span> <span class="toc-text">日志同步</span></a></li></ol>
     </div>
   </span>
 </div>
@@ -151,19 +151,39 @@
   
 
   <div class="content" itemprop="articleBody">
-    <h2 id="Raft-共识算法"><a href="#Raft-共识算法" class="headerlink" title="Raft 共识算法"></a>Raft 共识算法</h2><p>Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文：<a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf%EF%BC%8C%E5%A6%82%E6%9E%9C%E7%BC%BA%E5%A4%B1%E8%8B%B1%E8%AF%AD%E4%B8%8D%E8%A1%8C%EF%BC%8C%E5%85%88%E7%9C%8B%E4%B8%AD%E6%96%87%E7%BF%BB%E8%AF%91%E7%89%88%EF%BC%9Ahttps://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md">https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf，如果缺失英语不行，先看中文翻译版：https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md</a></p>
+    <h2 id="Raft-共识算法"><a href="#Raft-共识算法" class="headerlink" title="Raft 共识算法"></a>Raft 共识算法</h2><p>Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版<a target="_blank" rel="noopener" href="https://ramcloud.atlassian.net/wiki/download/attachments/6586375/raft.pdf">论文</a>，如果英语不行，先看中文<a target="_blank" rel="noopener" href="https://github.com/maemual/raft-zh_cn/blob/master/raft-zh_cn.md">翻译版</a></p>
 <p>了解的差不多了以后，基本上就要开始动手去写一个Raft了，这里推荐直接使用MIT 6.824的实验来做，比较容易上手，注意这个实验是使用Go语言做的，如果不熟悉Go语言，可以快速学习一下</p>
-<h2 id="MIT-6-824"><a href="#MIT-6-824" class="headerlink" title="MIT 6.824"></a>MIT 6.824</h2><p>MIT 6.824是一个关于分布式算法的公开课，一般和数据库内核相关的课程一起学习（例如CMU15-445）,这个课可以再下面的地址看到翻译版本：</p>
-<iframe src="//player.bilibili.com/player.html?aid=87684880&bvid=BV1R7411t71W&cid=155852756&page=2" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true"> </iframe>
-
-<p>我并没有把这个课程看完，我的重点在于这个课程的第二个Lab，用Go语言做了一个Raft，这是入门Raft的一个好材料，该Lab的地址在这里：<a target="_blank" rel="noopener" href="http://nil.csail.mit.edu/6.824/2022/labs/lab-raft.html%EF%BC%8C%E6%8F%90%E4%BA%A4%E4%BD%9C%E4%B8%9A%E7%9A%84%E5%9C%B0%E5%9D%80%E5%9C%A8%EF%BC%9Ahttps://6824.scripts.mit.edu/2022/handin.py/">http://nil.csail.mit.edu/6.824/2022/labs/lab-raft.html，提交作业的地址在：https://6824.scripts.mit.edu/2022/handin.py/</a></p>
-<p>由于时间关系，我也没有把这个实验做完，只做了前两部，即：选举和日志同步，我的代码在：<a target="_blank" rel="noopener" href="https://github.com/eddyli1989/6.824">https://github.com/eddyli1989/6.824</a></p>
-<p>下面是一些建议：</p>
+<h2 id="MIT-6-824"><a href="#MIT-6-824" class="headerlink" title="MIT 6.824"></a>MIT 6.824</h2><p>MIT 6.824是一个关于分布式算法的公开课，一般和数据库内核相关的课程一起学习（例如CMU15-445）,这个课的完整视频可以在<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1R7411t71W/?p=2&vd_source=38ddec4d9f5d5a36fb2df2883f091000">这里</a>看到。</p>
+<p>我并没有把这个课程看完，我的重点在于这个课程的第二个Lab，用Go语言做了一个Raft，这是入门Raft的一个好材料，该Lab的地址在<a target="_blank" rel="noopener" href="http://nil.csail.mit.edu/6.824/2022/labs/lab-raft.html">这里</a>，提交作业的地址在<a target="_blank" rel="noopener" href="https://6824.scripts.mit.edu/2022/handin.py">这里</a></p>
+<p>由于时间关系，我也没有把这个实验做完，只做了前两部，即：选举和日志同步，我的代码在：<a target="_blank" rel="noopener" href="https://github.com/eddyli1989/6.824%EF%BC%8C%E6%88%91%E4%B8%8D%E5%BB%BA%E8%AE%AE%E4%BD%A0%E7%9B%B4%E6%8E%A5%E7%9C%8B%E7%AD%94%E6%A1%88">https://github.com/eddyli1989/6.824，我不建议你直接看答案</a></p>
+<p>下面是一些大方向之类的建议：</p>
 <ul>
 <li>在自己动手编写之前，不建议你在网上看别人的答案</li>
 <li>不要着急写代码，在写代码之前先想好程序的主要结构是什么样子，需要什么数据结构，如何驱动整个程序，甚至每个场景下应该如何处理，都先想好，如果实在想不出来，可以画流程图</li>
-<li>搞清楚每个状态下的每个变量是干啥用的，否则你只能在一次次莫名其妙的失败中去定位，非常消耗时间(例如我)</li>
-<li></li>
+<li>搞清楚每个状态下的每个变量是干啥用的，否则你只能在一次次莫名其妙的失败中去定位，非常消耗时间</li>
+</ul>
+<h2 id="选举阶段"><a href="#选举阶段" class="headerlink" title="选举阶段"></a>选举阶段</h2><ul>
+<li>在实现选举阶段之前，你需要先明确整个程序的运行框架，整个程序基于一个定时器不停的循环，需要新增一个Role变量，用来保存当前的角色，然后再定时器中根据角色的不同，进入不同的函数，这是程序的大框架</li>
+<li>确定选举定时器的超时时间，以及随机的时间范围，论文中建议为150<del>300ms，实际可能需要比这个时间更大，经过多次尝试，这个时间我最终选择了300</del>450ms</li>
+<li>随机数的选择，不要用rand，rand是假随机数，会导致几乎每次随机得到的时间都是固定的，会出现如下情况：当有2<del>3个节点，而这2</del>3个节点中，哪个节点满足成为Leader的条件是固定的，但是由于假随机数导致，该节点的定时器总是晚于其他节点，从而导致该节点一直无法赢得选举(瓜分选票，即：每个节点都投票给自己)，这种情况最终会导致用例的失败，因此我选择了crypto/rand.</li>
+<li>在第一个2A作业中，你不需要在RequestVote请求里对比日志，这个是2B的部分</li>
+<li>每一个节点在每一个Term中，只能投一张票，注意，是每一个Term，所以如果在Term1投给自己，现在收到Term2的投票请求，你还是要投给别人</li>
+<li>注意加锁，且不要死锁，在跑test的时候加上-race参数，控制锁的粒度，不要在休眠的时候仍然持有锁</li>
+<li>在广播请求时，注意过滤掉自己</li>
+<li>在任何阶段，收到一个响应中的Term比自己的Term大，立即变为Folowwer</li>
+<li>本实验中的RPC为同步调用，即：在未收到响应前会阻塞，且网络被设定为不可靠，所以任何一个请求的时延可能是不固定的</li>
+<li>基于以上原因，建议采用gorouting+chan的异步方式对同步调用进行封装，否则比较难以进行下去</li>
+<li>如果接纳了别人的投票，那角色应该变为Folowwer</li>
+<li>在变为Leader以后，马上发送AppendEntries</li>
+</ul>
+<h2 id="日志同步"><a href="#日志同步" class="headerlink" title="日志同步"></a>日志同步</h2><ul>
+<li>在RequestVote里要判断谁的日志更新，注意：论文中对谁的日志更新有准确描述，不要臆测，并不是谁的日志越长谁的就更新</li>
+<li>Start接口在Leader把日志添加到自己的Log数组中就可以返回了，并不用等待同步给其他节点</li>
+<li>nextIndex的含义，指的是下次同步日志的时候，可以尝试从该索引同步，但并不保障一定能同步成功</li>
+<li>matchIndex的含义，是用来校准commitIndex的，如果大多数节点的matchIndex都大于某个数，那么commitIndex应该被设置为这个数字</li>
+<li>matchIndex决定了lastApplied，理论上lastApplied&lt;=matchIndex</li>
+<li>应用到自动机的意思就是 构造一个ApplyMsg并把他送到applyCh，在当前场景下ApplyMsg的CommandValid应该被一直设置为true。在实际应用中，应用到自动机的意思应该是，针对该日志对数据做正式的修改，例如该日志是想set x = 10，那么应用到自动机的含义应该就是把x这个key的值设置为10.</li>
+<li>AppendEntriesArgs中的LeaderCommit扮演了重要角色，他实际上是2PC中的第二阶段，因为LeaderCommit可以控制Folowwer节点的commitIndex，从而控制Folowwer节点的日志提交(lastApplied)，一般正常的流程是：主节点收到Start，然后通过日志同步到子节点，然后主节点提交该日志，并在下一次心跳时，将LeaderCommit带给子节点，然后子节点才会去提交该日志。</li>
 </ul>
 
   </div>
@@ -190,7 +210,7 @@
     </div>
 
     <div id="toc-footer" style="display: none">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">Raft 共识算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIT-6-824"><span class="toc-number">2.</span> <span class="toc-text">MIT 6.824</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Raft-%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95"><span class="toc-number">1.</span> <span class="toc-text">Raft 共识算法</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#MIT-6-824"><span class="toc-number">2.</span> <span class="toc-text">MIT 6.824</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E9%80%89%E4%B8%BE%E9%98%B6%E6%AE%B5"><span class="toc-number">3.</span> <span class="toc-text">选举阶段</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%97%A5%E5%BF%97%E5%90%8C%E6%AD%A5"><span class="toc-number">4.</span> <span class="toc-text">日志同步</span></a></li></ol>
     </div>
 
     <div id="share-footer" style="display: none">
