@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang=zh>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="Docker是什么？Docker主要是为了解决软件的运行环境问题，当然，主要是Linux软件，举一个简单的例子小明开发了一个网站，这个网站用到的技术包括Nginx，Python，MySQL，Redis，现在小明需要把这个网站部署上线，那么他至少要在一个服务器上做下面几件事1、在服务器上安装Nginx，Python，MySQL，Redis软件2、对机器和软件进行相关的配置设置，例如MySQL的端口">
+<meta property="og:type" content="article">
+<meta property="og:title" content="快速上手Docker">
+<meta property="og:url" content="https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/index.html">
+<meta property="og:site_name" content="大帅的博客">
+<meta property="og:description" content="Docker是什么？Docker主要是为了解决软件的运行环境问题，当然，主要是Linux软件，举一个简单的例子小明开发了一个网站，这个网站用到的技术包括Nginx，Python，MySQL，Redis，现在小明需要把这个网站部署上线，那么他至少要在一个服务器上做下面几件事1、在服务器上安装Nginx，Python，MySQL，Redis软件2、对机器和软件进行相关的配置设置，例如MySQL的端口">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://eddyli1989.github.io/image/docker.png">
+<meta property="article:published_time" content="2023-04-15T10:09:29.220Z">
+<meta property="article:modified_time" content="2023-04-15T10:09:29.220Z">
+<meta property="article:author" content="大帅">
+<meta property="article:tag" content="docker">
+<meta property="article:tag" content="教程">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://eddyli1989.github.io/image/docker.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>快速上手Docker</title>
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+      <link rel="alternate" href="/true" title="大帅的博客" type="application/atom+xml" />
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 5.4.2"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="目录"><i class="fas fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="顶部" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fas fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="下一篇" href="/2023/04/03/MIT-6-824%E4%B8%8ERaft%E5%85%B1%E8%AF%86%E7%AE%97%E6%B3%95/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="返回顶部" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="分享文章" href="#"><i class="fas fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">上一篇</span>
+      <span id="i-next" class="info" style="display:none;">下一篇</span>
+      <span id="i-top" class="info" style="display:none;">返回顶部</span>
+      <span id="i-share" class="info" style="display:none;">分享文章</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&text=快速上手Docker"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&is_video=false&description=快速上手Docker"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=快速上手Docker&body=Check out this article: https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/"><i class="fas fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&name=快速上手Docker&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&t=快速上手Docker"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    <div id="toc">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Docker是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">2.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">Docker命令：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8docker%E8%BF%90%E8%A1%8Cnginx"><span class="toc-number">3.1.</span> <span class="toc-text">使用docker运行nginx</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8DockerFile%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">使用DockerFile创建自己的容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Registry-%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">Docker Registry 镜像仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-compose"><span class="toc-number">6.</span> <span class="toc-text">Docker compose</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-network"><span class="toc-number">7.</span> <span class="toc-text">Docker network</span></a></li></ol>
+    </div>
+  </span>
+</div>
+
+    
+    <div class="content index py4">
+        
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle" itemprop="name headline">
+        快速上手Docker
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span itemprop="name">大帅</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2023-04-15T10:09:29.220Z" itemprop="datePublished">2023-04-15</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fas fa-tag"></i>
+        <a class="tag-link-link" href="/tags/docker/" rel="tag">docker</a>, <a class="tag-link-link" href="/tags/%E6%95%99%E7%A8%8B/" rel="tag">教程</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content" itemprop="articleBody">
+    <p><img src="/image/docker.png" alt="png2"></p>
+<h2 id="Docker是什么？"><a href="#Docker是什么？" class="headerlink" title="Docker是什么？"></a>Docker是什么？</h2><p>Docker主要是为了解决软件的运行环境问题，当然，主要是Linux软件，举一个简单的例子<br>小明开发了一个网站，这个网站用到的技术包括Nginx，Python，MySQL，Redis，现在小明需要把这个网站部署上线，那么他至少要在一个服务器上做下面几件事<br>1、在服务器上安装Nginx，Python，MySQL，Redis软件<br>2、对机器和软件进行相关的配置设置，例如MySQL的端口号，Redis的端口号等<br>3、把自己开发的网站代码打包，并且上传到服务器上，然后启动相关服务<br>以上步骤是非常简化的版本，实际上如果真的要手动部署，可能会遇到更多问题<br>Docker就是解决上面这些问题的，有了Docker，小明在任何一台服务器上部署自己的软件，只需要简单的一个命令</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run my-web-app</span></span><br></pre></td></tr></table></figure>
+
+<p>Docker会自动下载相关镜像，并且自动创建一个完全隔离的环境，然后运行相关的软件，这得益于LInux的底层隔离技术，包括Linux 命名空间、控制组和 UnionFS ，注意：Docker与虚拟机不同，虽然二者有点类似，但是Docker的隔离更轻量级，Docker并不是真正的虚拟机，Docker在底层是共享操作系统内核的，而虚拟机则不共享操作系统内核</p>
+<h2 id="安装Docker"><a href="#安装Docker" class="headerlink" title="安装Docker"></a>安装Docker</h2><p>Linux:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl -fsSL https://get.docker.com -o get-docker.sh</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">sudo sh get-docker.sh</span></span><br></pre></td></tr></table></figure>
+
+<p>注意：如果安装了旧版本的Docker，需要使用对应的包管理工具卸载</p>
+<p>Windows 10 或 MacOS(不支持黑苹果)：<br><a target="_blank" rel="noopener" href="https://docs.docker.com/engine/install/">安装Docker Desktop</a></p>
+<p>当然，如果是带UI的Linux发行版也可以安装Linux版本的Docker Desktop<br>安装完成后在终端运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker version</span></span><br></pre></td></tr></table></figure>
+<p>如果看到版本信息则代表安装成功</p>
+<h2 id="Docker命令："><a href="#Docker命令：" class="headerlink" title="Docker命令："></a>Docker命令：</h2><p>Docker CLI的全量命令请参考:<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/commandline/docker/">这里</a></p>
+<h3 id="使用docker运行nginx"><a href="#使用docker运行nginx" class="headerlink" title="使用docker运行nginx"></a>使用docker运行nginx</h3><p>docker run可以直接运行一个容器，当本地不存在时，docker会从远端仓库拉取，默认的远端仓库是docker官方的docker hub，安装了Docker以后，基本上就不需要手动在服务器上安装任何软件了，假如你想运行一个nginx，那么你可以直接用下面的命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run nginx</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">Unable to find image &#x27;nginx:latest&#x27; locally</span><br><span class="line">latest: Pulling from library/nginx</span><br><span class="line">a2abf6c4d29d: Pull complete</span><br><span class="line">a9edb18cadd1: Pull complete</span><br><span class="line">589b7251471a: Pull complete</span><br><span class="line">186b1aaa4aa6: Pull complete</span><br><span class="line">b4df32aa5a72: Pull complete</span><br><span class="line">a0bcbecc962e: Pull complete</span><br><span class="line">Digest: sha256:0d17b565c37bcbd895e9d92315a05c1c3c9a29f762b011a10c54a66cd53c9b31</span><br><span class="line">Status: Downloaded newer image for nginx:latest</span><br><span class="line">/docker-entrypoint.sh: /docker-entrypoint.d/ is not empty, will attempt to perform configuration</span><br><span class="line">/docker-entrypoint.sh: Looking for shell scripts in /docker-entrypoint.d/</span><br><span class="line">/docker-entrypoint.sh: Launching /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh</span><br><span class="line">10-listen-on-ipv6-by-default.sh: info: Getting the checksum of /etc/nginx/conf.d/default.conf</span><br><span class="line">10-listen-on-ipv6-by-default.sh: info: Enabled listen on IPv6 in /etc/nginx/conf.d/default.conf</span><br><span class="line">/docker-entrypoint.sh: Launching /docker-entrypoint.d/20-envsubst-on-templates.sh</span><br><span class="line">/docker-entrypoint.sh: Launching /docker-entrypoint.d/30-tune-worker-processes.sh</span><br><span class="line">/docker-entrypoint.sh: Configuration complete; ready for start up</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: using the &quot;epoll&quot; event method</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: nginx/1.21.5</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: built by gcc 10.2.1 20210110 (Debian 10.2.1-6)</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: OS: Linux 4.19.130-boot2docker</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: start worker processes</span><br><span class="line">2022/06/26 02:59:53 [notice] 1#1: start worker process 30</span><br></pre></td></tr></table></figure>
+
+<p>这样，nginx就直接运行起来了，但是默认没有在后台运行，当按下Ctrl+C软件就退出了，可以使用-d参数，让docker在后台运行该容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d nginx</span></span><br><span class="line">182214dcd10b23bba2559116d13171745550a5a52c745aa699a895edeb55b7d0</span><br></pre></td></tr></table></figure>
+
+<p>docker 输出一串ID，nginx容器就在后台运行了，这个ID可以唯一标识一个容器，当需要输入这个ID时，大部分情况下并不需要输入完整的ID，输入前面几个字符就可以了<br>使用docker ps 查看正在运行的容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker ps</span></span><br><span class="line">CONTAINER ID   IMAGE     COMMAND                  CREATED          STATUS          PORTS     NAMES</span><br><span class="line">182214dcd10b   nginx     &quot;/docker-entrypoint.…&quot;   14 minutes ago   Up 14 minutes   80/tcp    cool_williams</span><br></pre></td></tr></table></figure>
+
+<p>可以看到正在运行的容器ID，使用的镜像，创建的时间还有端口号，名字等信息。<br>使用 stop 命令停止容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker stop 182214dcd10b</span></span><br><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">182214dcd10b</span></span><br></pre></td></tr></table></figure>
+
+<p>此时 docker ps无法查看该停止的容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker ps</span></span><br><span class="line">CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES</span><br></pre></td></tr></table></figure>
+
+<p>使用 docker ps -a 可以查看所有状态的容器</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker ps -a</span></span><br><span class="line">CONTAINER ID   IMAGE         COMMAND                  CREATED             STATUS                          PORTS     NAMES</span><br><span class="line">182214dcd10b   nginx         &quot;/docker-entrypoint.…&quot;   20 minutes ago      Exited (0) About a minute ago             cool_williams</span><br><span class="line">325b084cc16a   nginx         &quot;/docker-entrypoint.…&quot;   About an hour ago   Exited (0) 20 minutes ago                 priceless_cori</span><br><span class="line">c7e018e16d23   hello-world   &quot;/hello&quot;                 2 hours ago         Exited (0) 2 hours ago                    frosty_euclid</span><br></pre></td></tr></table></figure>
+
+<p>注意，此时无法通过外部的浏览器访问这个nginx服务器，因为docker内部的端口并没有暴露出来，可以运行下面的命令进行端口映射</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d -p 80:80 nginx</span></span><br></pre></td></tr></table></figure>
+
+<p>-p参数把docker内部的80端口映射到本机的80端口，打开浏览器，输入localhost就可以看到Nginx的欢迎页面了。<br>-v参数可以挂载本地文件目录，一般在运行数据库容器时，需要将数据持久化，否则在容器退出后所有的数据将丢失；例如：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d -p 80:80 -v /data/nginx:/data nginx</span></span><br></pre></td></tr></table></figure>
+
+<p>以上命令将本机的&#x2F;data&#x2F;nginx目录挂到到容器中的&#x2F;data目录，如果容器中对&#x2F;data目录的任何修改都将直接映射到外部磁盘上<br>docker exec命令可以在指定的容器内部执行命令，分为交互式和非交互式两种方式<br>非交互式：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker <span class="built_in">exec</span> 182214dcd10b <span class="built_in">ls</span> -al /var</span></span><br></pre></td></tr></table></figure>
+
+<p>exec后面是docker id，然后紧跟要在容器中运行的命令<br>交互式</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker <span class="built_in">exec</span> -it 182214dcd10b bash</span></span><br></pre></td></tr></table></figure>
+
+<p>-i选项代表使用交互方式，-t代表打开一个终端，bash是本次要运行的命令，一个shell程序<br>这样就相当于打开了一个交互式终端进入了容器内部，所做的操作都只在容器内部生效，如同进入了一个虚拟机，使用exit命令来退出容器。</p>
+<h2 id="使用DockerFile创建自己的容器"><a href="#使用DockerFile创建自己的容器" class="headerlink" title="使用DockerFile创建自己的容器"></a>使用DockerFile创建自己的容器</h2><p>Docker使用一种称为Dockerfile的文件来描述容器的组成以及相关配置，Dockerfile是docker的特有文件，必须满足相关格式<br>假如要创建自己的web程序，需要将所有依赖都打包到一个镜像中，以某个操作系统为底座来构筑自己的镜像<br>作为样例，我们使用python的flask框架来编写一个最简单的网页程序，并打包成一个镜像；关于flask可以参考如下<a target="_blank" rel="noopener" href="https://flask.palletsprojects.com/en/2.1.x/">链接</a></p>
+<p>1、新建一个文件夹</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir flask</span><br></pre></td></tr></table></figure>
+
+<p>2、打开一个py文件app.py，写入如下内容：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&quot;/&quot;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello_world</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;&lt;p&gt;Hello, World!&lt;/p&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">     app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>3、新建一个文件命名为dockerfile，写入如下内容：</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#这是一个注释</span></span><br><span class="line"><span class="keyword">FROM</span> ubuntu</span><br><span class="line"></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get update</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -y nginx</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -y python3</span></span><br><span class="line"><span class="keyword">RUN</span><span class="language-bash"> apt-get install -y python3-flask</span></span><br><span class="line"><span class="keyword">COPY</span><span class="language-bash"> app.py /var/hello.py</span></span><br><span class="line"><span class="keyword">ENV</span> FLASK_APP=hello</span><br><span class="line"><span class="keyword">CMD</span><span class="language-bash"> <span class="built_in">cd</span> /var &amp;&amp; flask run</span></span><br></pre></td></tr></table></figure>
+
+<p>dockerfile其实只有一种格式，就是</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 注释</span></span><br><span class="line">INSTRUCTION arguments </span><br></pre></td></tr></table></figure>
+
+<p>一个命令然后紧跟参数<br>dockerfile必须以FROM开始，代表在某个基础镜像上做接下来的操作，一般情况下以某个操作系统或某个现成的软件镜像开始；<br>其他常用命令包括：<br>RUN命令可以在镜像内部运行某个命令，本例中是使用apt-get命令来安装必要的软件<br>COPY命令可以将本地文件拷贝到容器内部，注意只能拷贝当前目录下的内容，因此COPY ..&#x2F;xxx xxx这种形式是无法成功的<br>ENV命令则可以简单的对容器注入环境变量<br>CMD命令用于指定当容器运行时需要执行的默认命令，CMD命令可以被docker run命令覆盖，如果不希望被覆盖，可以考虑使用ENTRYPOINT<br>全部的dockerfile手册请参考<a target="_blank" rel="noopener" href="https://docs.docker.com/engine/reference/builder/#usage">官方文档</a></p>
+<p>之后就可以通过docker buid命令来构建镜像了<br>4、运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker build -t flask:latest .</span></span><br></pre></td></tr></table></figure>
+<p>得到如下输出：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[+] Building 0.2s (11/11) FINISHED</span><br><span class="line"> =&gt; [internal] load build definition from Dockerfile                                                                                   0.0s</span><br><span class="line"> =&gt; =&gt; transferring dockerfile: 248B                                                                                                   0.0s</span><br><span class="line"> =&gt; [internal] load .dockerignore                                                                                                      0.0s</span><br><span class="line"> =&gt; =&gt; transferring context: 2B                                                                                                        0.0s</span><br><span class="line"> =&gt; [internal] load metadata for docker.io/library/ubuntu:latest                                                                       0.0s</span><br><span class="line"> =&gt; [internal] load build context                                                                                                      0.0s</span><br><span class="line"> =&gt; =&gt; transferring context: 27B                                                                                                       0.0s</span><br><span class="line"> =&gt; [1/6] FROM docker.io/library/ubuntu                                                                                                0.0s</span><br><span class="line"> =&gt; CACHED [2/6] RUN apt-get update                                                                                                    0.0s</span><br><span class="line"> =&gt; CACHED [3/6] RUN apt-get install -y nginx                                                                                          0.0s</span><br><span class="line"> =&gt; CACHED [4/6] RUN apt-get install -y python3                                                                                        0.0s</span><br><span class="line"> =&gt; [6/6] COPY app.py /var/hello.py                                                                                                    0.0s</span><br><span class="line"> =&gt; exporting to image                                                                                                                 0.0s</span><br><span class="line"> =&gt; =&gt; writing image sha256:8ee4b660822edecb1bbe35f0421d57cfa94fe51533d16737e9ca0c84292fedf8                                           0.0s</span><br><span class="line"> =&gt; =&gt; naming to docker.io/library/flask:latest                                                                                        0.0s</span><br></pre></td></tr></table></figure>
+<p>-t 参数用于指明镜像的名称和tag，后面紧跟一个目录，docker会自动查找该目录下的dockerfile并根据该文件来进行镜像构建<br>构建完成后可以使用docker image ls命令来查看当前机器上所有的镜像列表</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker image <span class="built_in">ls</span></span></span><br><span class="line">REPOSITORY   TAG       IMAGE ID       CREATED         SIZE</span><br><span class="line">flask        latest    8ee4b660822e   5 seconds ago   213MB</span><br><span class="line">&lt;none&gt;       &lt;none&gt;    8b35a6e3e43d   7 minutes ago   213MB</span><br><span class="line">nginx        latest    605c77e624dd   6 months ago    141MB</span><br><span class="line">ubuntu       latest    ba6acccedd29   8 months ago    72.8MB</span><br></pre></td></tr></table></figure>
+<p>docker image命令是用来管理镜像的，使用方法可以通过:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker image --<span class="built_in">help</span></span></span><br><span class="line">Usage:  docker image COMMAND</span><br><span class="line"></span><br><span class="line">Manage images</span><br><span class="line"></span><br><span class="line">Commands:</span><br><span class="line">  build       Build an image from a Dockerfile</span><br><span class="line">  history     Show the history of an image</span><br><span class="line">  import      Import the contents from a tarball to create a filesystem image</span><br><span class="line">  inspect     Display detailed information on one or more images</span><br><span class="line">  load        Load an image from a tar archive or STDIN</span><br><span class="line">  ls          List images</span><br><span class="line">  prune       Remove unused images</span><br><span class="line">  pull        Pull an image or a repository from a registry</span><br><span class="line">  push        Push an image or a repository to a registry</span><br><span class="line">  rm          Remove one or more images</span><br><span class="line">  save        Save one or more images to a tar archive (streamed to STDOUT by default)</span><br><span class="line">  tag         Create a tag TARGET_IMAGE that refers to SOURCE_IMAGE</span><br></pre></td></tr></table></figure>
+
+<p>对于任意的docker命令都可以通过 docker COMMAND –help来查看使用方法。<br>运行一下制作的镜像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run flask</span></span><br><span class="line"> * Serving Flask app &quot;hello&quot;</span><br><span class="line"> * Environment: production</span><br><span class="line">   WARNING: This is a development server. Do not use it in a production deployment.</span><br><span class="line">   Use a production WSGI server instead.</span><br><span class="line"> * Debug mode: off</span><br><span class="line"> * Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)</span><br></pre></td></tr></table></figure>
+<p>至此，镜像已经成功制作并运行</p>
+<h2 id="Docker-Registry-镜像仓库"><a href="#Docker-Registry-镜像仓库" class="headerlink" title="Docker Registry 镜像仓库"></a>Docker Registry 镜像仓库</h2><p>git有github，docker也有docker hub，和git类似，docker需要一个存储所有镜像的地方，这样你可以和别人共享你制作的镜像，也可以使用别人制作的镜像，Docker官方提供的默认仓库是Docker hub，如果要修改默认的仓库可以运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/docker/daemon.json</span><br></pre></td></tr></table></figure>
+
+<p>写入：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;registry-mirrors&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;https://docker.mirrors.ustc.edu.cn&quot;</span><span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>列表中可以使用任何提供docker仓库服务的地址，上述例子中使用的是中科大的镜像仓库。<br>接着，需要使配置生效：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo systemctl daemon-reload </span><br><span class="line">sudo service docker restart </span><br></pre></td></tr></table></figure>
+
+<p>当然也可以使用本地仓库，使用本地仓库需要使用docker-registry，docker通过一个镜像提供了该服务，运行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d -p 5000:5000 --restart=always --name registry registry</span></span><br></pre></td></tr></table></figure>
+<p>默认情况下，仓库会被创建在容器的 &#x2F;var&#x2F;lib&#x2F;registry 目录下。你可以通过 -v 参数来将镜像文件存放在本地的指定路径。例如下面的例子将上传的镜像放到本地的 &#x2F;data&#x2F;registry 目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d  -p 5000:5000  -v /data/registry:/var/lib/registry registry</span></span><br></pre></td></tr></table></figure>
+<p>这样就运行了一个本地仓库并且镜像持久化的存储在&#x2F;data&#x2F;registry目录下。<br>先尝试将本地的镜像推到仓库中：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker push 127.0.0.1:5000/ubuntu:latest</span></span><br><span class="line">The push refers to repository [127.0.0.1:5000/ubuntu]</span><br><span class="line">373a30c24545: Pushed</span><br><span class="line">a9148f5200b0: Pushed</span><br><span class="line">cdd3de0940ab: Pushed</span><br><span class="line">fc56279bbb33: Pushed</span><br><span class="line">b38367233d37: Pushed</span><br><span class="line">2aebd096e0e2: Pushed</span><br><span class="line">latest: digest: sha256:fe4277621f10b5026266932ddf760f5a756d2facd505a94d2da12f4f52f71f5a size: 1568</span><br></pre></td></tr></table></figure>
+
+<p>用 curl 查看仓库中的镜像。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">curl 127.0.0.1:5000/v2/_catalog</span></span><br><span class="line">&#123;&quot;repositories&quot;:[&quot;ubuntu&quot;]&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以看到 {“repositories”:[“ubuntu”]}，表明镜像已经被成功上传了。</p>
+<h2 id="Docker-compose"><a href="#Docker-compose" class="headerlink" title="Docker compose"></a>Docker compose</h2><p>我们往往需要多个容器配合来完成某个上层应用，例如网站程序经常需要搭配一个数据库使用，这种情况可以把网站后台程序和数据库分别放到两个容器中运行，Docker compose工具提供一种简化的方式来组织多个容器，并且能够用一个命令快速的部署多个容器；<br>Docker compose使用YAML文件来描述容器以及容器之间的关系，使用Docker compose一般分为3步</p>
+<ul>
+<li>定义每个容器的Dockerfile</li>
+<li>定义一个称为docker-compose.yaml的文件，用来描述多个容器之间的关系</li>
+<li>使用docker compose up命令一键部署应用程序<br>我们仍然以上个例子中的flask程序为基础，并新增一个计数功能，为此我们需要改写我们的web程序，如下:</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask</span><br><span class="line"><span class="keyword">from</span> redis <span class="keyword">import</span> Redis</span><br><span class="line"></span><br><span class="line">app = Flask(__name__)</span><br><span class="line">redis = Redis(host=<span class="string">&#x27;redis&#x27;</span>, port=<span class="number">6379</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello</span>():</span><br><span class="line">     count = redis.incr(<span class="string">&#x27;hits&#x27;</span>)</span><br><span class="line">     <span class="keyword">return</span> <span class="string">&#x27;&lt;p&gt;Hello World! &#123;&#125; times。&lt;/p&gt;&#x27;</span>.<span class="built_in">format</span>(count)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">     app.run(host=<span class="string">&quot;0.0.0.0&quot;</span>, debug=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+
+<p>经过修改后，我们的程序会连接一个Redis数据库，并且每次被访问到，都会将计数加一，并展示到页面，为了连接Redis我们必须运行一个Redis的容器，好在该容器官方都制作好了，因此直接运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker run -d redis</span></span><br></pre></td></tr></table></figure>
+<p>就可以直接运行一个Redis数据库，但是此时web程序并没有连接到这个Redis容器，我们需要定义两个容器的关系<br>编写一个简单的docker-compose.yaml文件</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">services:</span></span><br><span class="line">     <span class="attr">web:</span></span><br><span class="line">         <span class="attr">build:</span> <span class="string">.</span></span><br><span class="line">         <span class="attr">ports:</span></span><br><span class="line">             <span class="bullet">-</span> <span class="string">&quot;5000:5000&quot;</span></span><br><span class="line">     <span class="attr">redis:</span></span><br><span class="line">         <span class="attr">image:</span> <span class="string">&quot;redis:alpine&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>docker-compose文件必须有一个services字段，每一个service可以理解为一个由多个容器组成的一个上层应用上述例子中的service由两个容器组成，名字分别是web、redis，其中web容器需要使用docker build命令来构筑镜像，使用的目录为当前目录，并且需要把端口5000映射到主机的5000端口<br>redis容器责直接从系统配置的docker registry中尝试直接获取镜像<br>运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker compose up</span></span><br><span class="line">[+] Running 2/2</span><br><span class="line"> - Container nginxpython-redis-1  Started                                                                0.3s</span><br><span class="line"> - Container nginxpython-web-1    Started                                                                0.3s</span><br></pre></td></tr></table></figure>
+
+<p>此时两个容器就一并开始构建和启动起来了<br>这里需要解释一个问题：为什么使用docker compose，flask程序就可以直接连接到一个名字为’redis’的主机上，他又是怎么找到这个主机的呢? 这与docker network的机制有关。</p>
+<h2 id="Docker-network"><a href="#Docker-network" class="headerlink" title="Docker network"></a>Docker network</h2><p>第一次安装完Docker，直接运行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">$ </span><span class="language-bash">docker network <span class="built_in">ls</span></span></span><br></pre></td></tr></table></figure>
+
+<p>能够直接看到docker建立的默认网络，总共有3个</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">NETWORK ID     NAME      DRIVER    SCOPE</span><br><span class="line">479bda8f37b9   bridge    bridge    local</span><br><span class="line">273213114bfe   host      host      local</span><br><span class="line">cce99c0034c4   none      null      local</span><br></pre></td></tr></table></figure>
+
+<p>bridge：docker 默认使用的是bridge，原理上是一个软件实现的二层交换机，如果不使用任何参数运行容器，那么默认会连接到bridge上，也就是说，默认一个机器上的容器都是可以互联互通的，但是这种情况下也只能通过IP来互联互通，无法通过hostname进行交互<br>host：移除容器和 Docker 宿主机之间的网络隔离，并直接使用主机的网络。host 模式仅适用于 Docker 17.06+<br>none：对于此容器，禁用所有联网。通常与自定义网络驱动程序一起使用。none 模式不适用于集群服务<br>在Docker compose章节的例子中，flask程序是直接连接的一个名为’redis’的host，而容器本身并不知道redis这个host对应的ip地址是什么，所以无法连接<br>如果要解决这个问题，我们可以手动修改flask程序的host文件，配置上redis容器的地址以及host，这样就可以互通了<br>还有另外一种方法就是使用docker compose命令，如同上个章节那样，这种情况下，docker会默认建立一个自定义网络，而不是使用默认的bridge网络，此外，如果使用自定义网络，docker还会默认提供一个DNS服务器，用于一个services下的各个容器之间的域名解析，在运行完docker compose up后，可以查看docker network ls，会发现docker建立了一个网络，名称为nginxpython_default   </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ docker network ls</span><br><span class="line">NETWORK ID     NAME                  DRIVER    <span class="keyword">SCOPE</span></span><br><span class="line">add5f8daed77   bridge                bridge    <span class="keyword">local</span></span><br><span class="line"><span class="number">3</span>c065d8a1d64   host                  host      <span class="keyword">local</span></span><br><span class="line"><span class="number">41</span>afd011cef9   nginxpython_default   bridge    <span class="keyword">local</span></span><br><span class="line">c31bc25f91ae   <span class="keyword">none</span>                  <span class="keyword">null</span>      <span class="keyword">local</span></span><br></pre></td></tr></table></figure>
+<p>此时，该docker compose定义的两个容器就能够通过镜像名称作为主机名称进行互联，且网络与其他容器是隔离的<br>docker 网络相关材料请参考<a target="_blank" rel="noopener" href="https://docs.docker.com/network/">官方文档</a></p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+         
+          <li><a href="/">首页</a></li>
+         
+          <li><a href="/about/">关于</a></li>
+         
+          <li><a href="/archives/">归档</a></li>
+         
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li>
+        
+      </ul>
+    </div>
+
+    <div id="toc-footer" style="display: none">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="toc-number">1.</span> <span class="toc-text">Docker是什么？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%AE%89%E8%A3%85Docker"><span class="toc-number">2.</span> <span class="toc-text">安装Docker</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="toc-number">3.</span> <span class="toc-text">Docker命令：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8docker%E8%BF%90%E8%A1%8Cnginx"><span class="toc-number">3.1.</span> <span class="toc-text">使用docker运行nginx</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BD%BF%E7%94%A8DockerFile%E5%88%9B%E5%BB%BA%E8%87%AA%E5%B7%B1%E7%9A%84%E5%AE%B9%E5%99%A8"><span class="toc-number">4.</span> <span class="toc-text">使用DockerFile创建自己的容器</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-Registry-%E9%95%9C%E5%83%8F%E4%BB%93%E5%BA%93"><span class="toc-number">5.</span> <span class="toc-text">Docker Registry 镜像仓库</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-compose"><span class="toc-number">6.</span> <span class="toc-text">Docker compose</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Docker-network"><span class="toc-number">7.</span> <span class="toc-text">Docker network</span></a></li></ol>
+    </div>
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&text=快速上手Docker"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&is_video=false&description=快速上手Docker"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=快速上手Docker&body=Check out this article: https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/"><i class="fas fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&title=快速上手Docker"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&name=快速上手Docker&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://eddyli1989.github.io/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/&t=快速上手Docker"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fas fa-bars fa-lg" aria-hidden="true"></i> 菜单</a>
+        <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fas fa-list fa-lg" aria-hidden="true"></i> 目录</a>
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fas fa-share-alt fa-lg" aria-hidden="true"></i> 分享</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fas fa-chevron-up fa-lg" aria-hidden="true"></i> 返回顶部</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2023
+    大帅
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">首页</a></li><!--
+     --><!--
+       --><li><a href="/about/">关于</a></li><!--
+     --><!--
+       --><li><a href="/archives/">归档</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">项目</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+ 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script> 
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script> 
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"复制到粘贴板！\">";
+    btn += '<i class="far fa-clone"></i>';
+    btn += '</span>'; 
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "复制成功！");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Google Analytics -->
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-9TV7SDFVG2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-9TV7SDFVG2');
+    </script>
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Umami Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>

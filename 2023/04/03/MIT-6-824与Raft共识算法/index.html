@@ -14,7 +14,7 @@
 <meta property="og:description" content="Raft 共识算法Raft是非常出名的一个共识算法，关于Raft的介绍网络上已经有很多帖子了，但我建议你还是直接看原版论文，如果英语不行，先看中文翻译版 了解的差不多了以后，基本上就要开始动手去写一个Raft了，这里推荐直接使用MIT 6.824的实验来做，比较容易上手，注意这个实验是使用Go语言做的，如果不熟悉Go语言，可以快速学习一下 MIT 6.824MIT 6.824是一个关于分布式算法的">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-04-03T07:25:53.000Z">
-<meta property="article:modified_time" content="2023-04-13T01:24:23.158Z">
+<meta property="article:modified_time" content="2023-04-15T10:09:29.220Z">
 <meta property="article:author" content="大帅">
 <meta property="article:tag" content="Raft">
 <meta property="article:tag" content="分布式">
@@ -77,6 +77,8 @@
     <br/>
     <span id="actions">
       <ul>
+        
+        <li><a class="icon" aria-label="上一篇" href="/2023/04/15/%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8BDocker/"><i class="fas fa-chevron-left" aria-hidden="true" onmouseover="$('#i-prev').toggle();" onmouseout="$('#i-prev').toggle();"></i></a></li>
         
         
         <li><a class="icon" aria-label="下一篇" href="/2023/03/30/2023%20%E5%8F%98%E5%8C%96%E7%9A%84%E4%B8%80%E5%B9%B4/"><i class="fas fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
@@ -165,7 +167,7 @@
 <h2 id="选举阶段"><a href="#选举阶段" class="headerlink" title="选举阶段"></a>选举阶段</h2><ul>
 <li>在实现选举阶段之前，你需要先明确整个程序的运行框架，整个程序基于一个定时器不停的循环，需要新增一个Role变量，用来保存当前的角色，然后再定时器中根据角色的不同，进入不同的函数，这是程序的大框架</li>
 <li>确定选举定时器的超时时间，以及随机的时间范围，论文中建议为150-300ms，实际可能需要比这个时间更大，经过多次尝试，这个时间我最终选择了300~450ms</li>
-<li>随机数的选择，不要用rand，rand是假随机数，会导致几乎每次随机得到的时间都是固定的，会出现如下情况：当有2<del>3个节点，而这2</del>3个节点中，哪个节点满足成为Leader的条件是固定的，但是由于假随机数导致，该节点的定时器总是晚于其他节点，从而导致该节点一直无法赢得选举(瓜分选票，即：每个节点都投票给自己)，这种情况最终会导致用例的失败，因此我选择了crypto&#x2F;rand.</li>
+<li>随机数的选择，不要用rand，rand是假随机数，会导致几乎每次随机得到的时间都是固定的，会出现如下情况：当有若干个节点时，这几个节点中，哪个节点满足成为Leader的条件是固定的(只有一个节点满足Leader条件)，但是由于假随机数导致，该节点的定时器总是晚于其他节点，从而导致该节点一直无法赢得选举(瓜分选票，即：每个节点都投票给自己)，这种情况最终会导致用例的失败，因此我选择了crypto&#x2F;rand.</li>
 <li>在第一个2A作业中，你不需要在RequestVote请求里对比日志，这个是2B的部分</li>
 <li>每一个节点在每一个Term中，只能投一张票，注意，是每一个Term，所以如果在Term1投给自己，现在收到Term2的投票请求，你还是要投给别人</li>
 <li>注意加锁，且不要死锁，在跑test的时候加上-race参数，控制锁的粒度，不要在休眠的时候仍然持有锁</li>
